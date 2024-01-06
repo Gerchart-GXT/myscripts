@@ -50,8 +50,8 @@
                     "certificates": [
                         {
                             "ocspStapling": 3600,
-                            "certificateFile": "/root/ssl/hostyun-hk-mg.gerchart.top.crt",
-                            "keyFile": "/root/ssl/hostyun-hk-mg.gerchart.top.key"
+                            "certificateFile": "[crtPath]",
+                            "keyFile": "[keyPath]"
                         }
                     ]
                 }
