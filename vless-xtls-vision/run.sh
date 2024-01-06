@@ -192,7 +192,7 @@ done
 
 nginxConfigPath="/etc/nginx/nginx.conf"
 
-customConfig $nginxConfigLink $nginxConfigPath "\[guiseDomain\]" "https:\/\/$guiseDomain"
+customConfig $nginxConfigLink $nginxConfigPath "\[guiseDomain\]" "https:\/\/$guiseDomain" "\[keyPath\]" "$keyPath" "\[crtPath\]" "$crtPath"
 
 echo "Nginx配置写入完成，正在重启Nginx"
 systemctl restart nginx
