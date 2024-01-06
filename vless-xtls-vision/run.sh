@@ -21,23 +21,6 @@ function installFromApt()
     fi
 }
 
-# 用于配置关键字替换及写入
-function customConfig()
-{
-    # link path org1 now1 ...
-    argc=$#
-    argv=("${@}")
-    configlink=$1
-    configPath=$2
-    tmpFilePath="/tmp/${uuid}/config.tmp"
-    curl $configlink > $tmpFilePath
-    for ((i=2;i<argc;i+=2)); do
-        echo ${argv[i]}
-        sed -i "s/${argv[i]}/${argv[i+1]}/g" "$tmpFilePath"
-    done
-    mv $tmpFilePath $configPath
-}
-
 function getOSInfo()
 {
     if [ -f /etc/os-release ]; then
@@ -56,6 +39,7 @@ function getOSInfo()
     fi
 }
 
+# 用于配置关键字替换及写入
 function customConfig()
 {
     argc=$#
@@ -65,7 +49,6 @@ function customConfig()
     tmpFilePath="/tmp/${uuid}/config.tmp"
     curl $configlink > $tmpFilePath
     for ((i=2;i<argc;i+=2)); do
-        echo ${argv[i]}
         sed -i "s/${argv[i]}/${argv[i+1]}/g" "$tmpFilePath"
     done
     mv $tmpFilePath $configPath
@@ -192,7 +175,7 @@ done
 
 nginxConfigPath="/etc/nginx/nginx.conf"
 
-customConfig $nginxConfigLink $nginxConfigPath "\[guiseDomain\]" "https:\/\/$guiseDomain" "\[keyPath\]" "$keyPath" "\[crtPath\]" "$crtPath"
+customConfig $nginxConfigLink $nginxConfigPath "\[guiseDomain\]" "https:\/\/$guiseDomain"
 
 echo "Nginx配置写入完成，正在重启Nginx"
 systemctl restart nginx
@@ -202,7 +185,7 @@ echo $uuid
 
 xrayConfigPath="/usr/local/etc/xray/config.json"
 echo "写入XRAY配置"
-customConfig $xrayConfigLink $xrayConfigPath "\[uuid\]" $uuid
+customConfig $xrayConfigLink $xrayConfigPath "\[uuid\]" "$uuid" "\[keyPath\]" "\/root\/ssl\/${domain}.key" "\[crtPath\]" "\/root\/ssl\/${domain}.crt"
 
 echo "给予Xray证书权限"
 chmod -R 777 /root # 这里很奇怪，如果只给acme和ssl 还是无法读取
