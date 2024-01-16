@@ -1,5 +1,8 @@
 #/bin/bash
 
+apt install unzip -y
+apt install zip -y
+
 public_ip=$(curl -s ifconfig.me)
 bk_upload_server=""
 bk_upload_path=""
@@ -36,7 +39,7 @@ zip -q -r /root/docker_bk.zip *
 for folder in "${docker_apps[@]}"; do
     cd $folder
     if test -e "./docker-compose.yml"; then
-        docker-compose pull
+        docker compose pull
         docker compose up -d
     fi
     cd ..
