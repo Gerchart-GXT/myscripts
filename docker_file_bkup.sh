@@ -1,13 +1,10 @@
 #/bin/bash
 
-apt install unzip -y
-apt install zip -y
-
 public_ip=$(curl -s ifconfig.me)
 bk_upload_server=""
 bk_upload_path=""
 
-job="30 5 * * * /root/docker-compose_backup.sh"
+job="30 5 * * * $(pwd)/docker-compose_backup.sh"
 
 crontab -l | grep -qF "$job"
 if [ $? -ne 0 ]; then
@@ -21,19 +18,21 @@ for folder in "${docker_apps[@]}"; do
     cd $folder
     echo $folder
     if test -e "./docker-compose.yml"; then
-        docker compose stop
+        docker compose down
     fi
     cd ..
 done
 
-if test -e "/root/docker_bk.zip"; then
-    if test -e "/root/docker_bk_past.zip"; then
-        rm /root/docker_bk_past.zip
+if test -e "/root/bk_file/docker_bk.zip"; then
+    if test -e "/root/bk_file/docker_bk_past.zip"; then
+        rm /root/bk_file/docker_bk_past.zip
     fi
-    mv /root/docker_bk.zip /root/docker_bk_past.zip
+    mv /root/bk_file/docker_bk.zip /root/bk_file/docker_bk_past.zip
 fi
 
-zip -q -r /root/docker_bk.zip *
+tar -czvf docker_bk.zip *
+mkdir -p /root/bk_file
+mv docker_bk.zip /root/bk_file/
 # scp /root/docker_bk.zip ${bk_upload_server}:${bk_upload_path}${public_ip}.zip
 
 for folder in "${docker_apps[@]}"; do
